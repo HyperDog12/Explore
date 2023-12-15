@@ -45,7 +45,7 @@ public:
     }
   };
   void setNames(int x){
-    ifstream namesList("files/names.txt");
+    ifstream namesList("files/names/names.txt");
     string names;
     int rand = random(2, 501);
     int i = 1;
@@ -125,7 +125,7 @@ public:
             "out)?\n";
     cin >> size;
     while (size<20 || size>100){
-      cout << "Please enter the world size, it should be between 20 and 100.";
+      cout << "Please enter the world size, it should be between 20 and 100.\n";
       cin >> size;
     }
     cout << "How many enimies would you like to have, it should be between 5 and " << round(size*size*0.05) << ".\n";
@@ -164,7 +164,7 @@ public:
         if (x != playerloc[1] || y != playerloc[0]) {
           cout << map[y][x];
         } else {
-          cout << "1";
+          cout << "8";
         }
         if (x != size - 1) {
           cout << ",";
