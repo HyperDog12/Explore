@@ -2,8 +2,10 @@
 #include <iostream>
 #include <random>
 #include <string>
+#include <fstream>
 using std::cin;
 using std::cout;
+using std::ifstream;
 using std::rand;
 using std::stoi;
 using std::to_string;
@@ -20,11 +22,11 @@ private:
   int size = -1;
   int map[100][100];
   int playerloc[2];
-  int enemies[6][20];
+  int enemies[6][500];
   int em;
-  string enemyNames[20];
+  string enemyNames[500];
   string name;
-
+  //first loc up/down, second left right
 public:
   string getName() { return name; };
   void move(int direction) {
@@ -42,9 +44,32 @@ public:
       cout << "Sucessfuly moved East\n";
     }
   };
+  void setNames(int x){
+    ifstream namesList("files/names.txt");
+    string names;
+    int rand = random(2, 501);
+    int i = 1;
+    while (getline (namesList, names) && i<rand) {
+       i++;
+    }
+    enemyNames[x]=names;
+  };
   void setEnemy() {
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < em+1; i++) {
+      //y
       enemies[0][i] = random(0,size);
+      //x
+      enemies[1][i] = random(0,size);
+      //attack power
+      enemies[2][i] = random(10, 50);
+      //health
+      enemies[3][i] = random(75, 200);
+      //live?
+      enemies[4][i] = 1;
+      //discovered
+      enemies[5][i] = 0;
+      //names
+      setNames(i);
     }
   };
   void drawRiver() {
@@ -93,13 +118,22 @@ public:
     }
   };
   void makeWorld() {
-    cout << "What would you like to name your world\n";
+    cout << "What would you like to name your world?\n";
     cin >> name;
     cout << "How large would you like the world to be(Enter an integer under "
             "100 and greater than 20, larger maps might be harder to print "
             "out)?\n";
     cin >> size;
-    cout << "\n"; 
+    while (size<20 || size>100){
+      cout << "Please enter the world size, it should be between 20 and 100.";
+      cin >> size;
+    }
+    cout << "How many enimies would you like to have, it should be between 5 and " << round(size*size*0.05) << ".\n";
+    cin >> em;
+    while (em < 5 || em > round(size*size*0.05)){
+    cout << "How many enimies would you like to have, it should be between 5 and " << round(size*size*0.05) << ".\n";
+      cin >> em;
+    }
     cout << "Making world...\n";
     /*  for (int i = size; i < 100; i++){
                     for (int j = 0; j < 100; j++){
@@ -120,6 +154,7 @@ public:
     playerloc[1] = round(size / 2);
     drawRiver();
     drawRiver();
+    setEnemy();
   };
   void printMap() {
     int y = 0;
@@ -142,7 +177,12 @@ public:
     }
     cout << "Key: 0=River, 1=Player, 7=Forest\n";
   };
-  string coords() {return to_string(playerloc[0]) += ", "+=to_string(playerloc[1]);};
+  string coords() {
+    string code = to_string(playerloc[0]);
+    code+=", ";
+    code+=to_string(playerloc[1]);
+    return code;
+  };
 };
 void clear() { cout << "\033[2J\033[1;1H"; }
 int main() {
