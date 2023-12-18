@@ -28,30 +28,88 @@ private:
   string name;
   //first loc up/down, second left right
 public:
+  int checkForEm(int x, int y, int type){
+  int isEm = -1;
+    if (type == 1){
+  for (int i=0; i<em; i++){
+    if (enemies[0][i]==x && enemies[1][i]==y && enemies[5][i]){
+      isEm = i;
+      break;
+    }
+  }
+  } else if (type==2){
+      for (int i=0; i<em; i++){
+        if (enemies[0][i]==x && enemies[1][i]==y){
+          isEm = i;
+          break;
+        }
+      }
+  }
+  return isEm;
+};
   string getName() { return name; };
   void move(int direction) {
     if (direction == 1) {
+      if (playerloc[0]-1>=0){
       playerloc[0]--;
-      cout << "Sucessfuly moved North\n";
+        cout << "Sucessfuly moved North\n";
+      } else {
+        cout << "Failed to move North, end of map\n"; 
+      }
     } else if (direction == 2) {
+      if (playerloc[0]+1<size){
       playerloc[0]++;
       cout << "Sucessfuly moved South\n";
+      } else {
+        cout << "Failed to move South, end of map\n"; 
+      }
     } else if (direction == 3) {
+      if (playerloc[1]-1>=0){
       playerloc[1]--;
       cout << "Sucessfuly moved West\n";
+      } else {
+        cout << "Failed to move West, end of map\n"; 
+      }
     } else if (direction == 4) {
+      if (playerloc[1]+1<size){
       playerloc[1]++;
       cout << "Sucessfuly moved East\n";
+    } else {
+        cout << "Failed to move East, end of map\n"; 
+      }
     }
   };
   void setNames(int x){
-    ifstream namesList("files/names/names.txt");
+    int mf = random(1,2);
     string names;
+    int i;
+    string ln;
+    if (mf == 1){
+    ifstream namesList("files/names/male.txt");
     int rand = random(2, 501);
-    int i = 1;
+    i = 1;
     while (getline (namesList, names) && i<rand) {
        i++;
     }
+      namesList.close();
+    } else if (mf == 2){
+    ifstream namesList("files/names/female.txt");
+    int rand = random(2, 501);
+    i = 1;
+    while (getline (namesList, names) && i<rand) {
+       i++;
+    }
+      namesList.close();
+    }
+    ifstream namesList("files/names/last.txt");
+    int rand = random(2, 501);
+    i = 1;
+    while (getline (namesList, ln) && i<rand) {
+       i++;
+    }
+    namesList.close();
+    names += " ";
+    names += ln;
     enemyNames[x]=names;
   };
   void setEnemy() {
@@ -131,7 +189,7 @@ public:
     cout << "How many enimies would you like to have, it should be between 5 and " << round(size*size*0.05) << ".\n";
     cin >> em;
     while (em < 5 || em > round(size*size*0.05)){
-    cout << "How many enimies would you like to have, it should be between 5 and " << round(size*size*0.05) << ".\n";
+    cout << "How many enemies would you like to have, it should be between 5 and " << round(size*size*0.05) << ".\n";
       cin >> em;
     }
     cout << "Making world...\n";
@@ -162,9 +220,13 @@ public:
       int x = 0;
       while (x < size) {
         if (x != playerloc[1] || y != playerloc[0]) {
-          cout << map[y][x];
+          if (checkForEm(y,x,1) != -1){
+            cout << "E"; 
+          } else {
+            cout << map[y][x];
+          }
         } else {
-          cout << "8";
+          cout << "U";
         }
         if (x != size - 1) {
           cout << ",";
@@ -175,13 +237,20 @@ public:
       }
       y++;
     }
-    cout << "Key: 0=River, 1=Player, 7=Forest\n";
+    cout << "Key: 0=River,  7=Forest\n";
+    cout << "     U=Player, E=Enemy\n"; 
   };
   string coords() {
     string code = to_string(playerloc[0]);
     code+=", ";
     code+=to_string(playerloc[1]);
     return code;
+  };
+  void UpDiscEms() {
+     if (checkForEm(playerloc[0], playerloc[1], 2) > -1){
+       enemies[5][checkForEm(playerloc[0], playerloc[1], 2)]=1;
+       cout << "You happen to stumble across an enemy, \n"; 
+     }
   };
 };
 void clear() { cout << "\033[2J\033[1;1H"; }
@@ -223,5 +292,6 @@ int main() {
     } else if (input == "pos" || input == "Pos"){
       cout << map.coords() << endl;
     } else {cout << "Invaild command, use help to see command list\n";}
+    map.UpDiscEms();
   }
 }
