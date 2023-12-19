@@ -236,7 +236,7 @@ public:
       cin >> CuEmFiPath;
       customEm=true;
     }
-    cout << "How many enimies would you like to have, it should be between 5 and " << round(size*size*0.05) << ".\n";
+    cout << "How many enemies would you like to have, it should be between 5 and " << round(size*size*0.05) << ".\n";
     cin >> em;
     while (em < 5 || em > round(size*size*0.05)){
     cout << "How many enemies would you like to have, it should be between 5 and " << round(size*size*0.05) << ".\n";
@@ -311,6 +311,7 @@ public:
 };
 void clear() { cout << "\033[2J\033[1;1H"; }
 int main() {
+  clear();
   world map;
   clear();
   map.makeWorld();
