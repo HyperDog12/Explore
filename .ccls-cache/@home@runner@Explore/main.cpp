@@ -26,6 +26,8 @@ private:
   int em;
   string enemyNames[500][2];
   string name;
+  bool customEm;
+  string CuEmFiPath;
   //first loc up/down, second left right
 public:
   int checkForEm(int x, int y, int type){
@@ -83,10 +85,13 @@ public:
     int mf = random(1,2);
     string names;
     int i;
+    string filepaths[3]={"files/names/male/", "files/names/female/", "files/names/last/"};
+    int rand;
     string ln;
+    if (!customEm){
     if (mf == 1){
-    ifstream namesList("files/names/male.txt");
-    int rand = random(2, 501);
+    ifstream namesList("files/names/male/main.txt");
+    rand = random(2, 501);
     i = 1;
     while (getline (namesList, names) && i<rand) {
        i++;
@@ -94,8 +99,8 @@ public:
       namesList.close();
       enemyNames[x][1] = "m";
     } else if (mf == 2){
-    ifstream namesList("files/names/female.txt");
-    int rand = random(2, 501);
+    ifstream namesList("files/names/female/main.txt");
+    rand = random(2, 501);
     i = 1;
     while (getline (namesList, names) && i<rand) {
        i++;
@@ -103,13 +108,48 @@ public:
       namesList.close();
       enemyNames[x][1] = "f";
     }
-    ifstream namesList("files/names/last.txt");
-    int rand = random(2, 501);
+    ifstream namesList("files/names/last/main.txt");
+    rand = random(2, 501);
     i = 1;
     while (getline (namesList, ln) && i<rand) {
        i++;
     }
     namesList.close();
+    } else {
+      filepaths[0]+=CuEmFiPath;
+      filepaths[1]+=CuEmFiPath;
+      filepaths[2]+=CuEmFiPath;
+
+      filepaths[0]+=".txt";
+      filepaths[1]+=".txt";
+      filepaths[2]+=".txt";
+      if (mf == 1){
+        ifstream namesList(filepaths[0]);
+        rand = random(2, 501);
+        i = 1;
+        while (getline (namesList, names) && i<rand) {
+           i++;
+        }
+          namesList.close();
+          enemyNames[x][1] = "m";
+        } else if (mf == 2){
+        ifstream namesList(filepaths[1]);
+        rand = random(2, 501);
+        i = 1;
+        while (getline (namesList, names) && i<rand) {
+           i++;
+        }
+          namesList.close();
+          enemyNames[x][1] = "f";
+        }
+        ifstream namesList(filepaths[2]);
+        rand = random(2, 501);
+        i = 1;
+        while (getline (namesList, ln) && i<rand) {
+           i++;
+        }
+        namesList.close();
+    }
     names += " ";
     names += ln;
     enemyNames[x][0]=names;
@@ -178,6 +218,7 @@ public:
     }
   };
   void makeWorld() {
+    string i;
     cout << "What would you like to name your world?\n";
     cin >> name;
     cout << "How large would you like the world to be(Enter an integer under "
@@ -187,6 +228,13 @@ public:
     while (size<20 || size>100){
       cout << "Please enter the world size, it should be between 20 and 100.\n";
       cin >> size;
+    }
+    cout << "Would you like to use custom names for enemies?(Y/N)\n";
+    cin >> i;
+    if (i=="y" || i=="Y" || i=="Yes" || i=="yes"){
+      cout << "Please enter the file name (if the file is names.txt the enter names ect.)\n";
+      cin >> CuEmFiPath;
+      customEm=true;
     }
     cout << "How many enimies would you like to have, it should be between 5 and " << round(size*size*0.05) << ".\n";
     cin >> em;
