@@ -24,7 +24,7 @@ private:
   int playerloc[2];
   int enemies[6][500];
   int em;
-  string enemyNames[500];
+  string enemyNames[500][2];
   string name;
   //first loc up/down, second left right
 public:
@@ -92,6 +92,7 @@ public:
        i++;
     }
       namesList.close();
+      enemyNames[x][1] = "m";
     } else if (mf == 2){
     ifstream namesList("files/names/female.txt");
     int rand = random(2, 501);
@@ -100,6 +101,7 @@ public:
        i++;
     }
       namesList.close();
+      enemyNames[x][1] = "f";
     }
     ifstream namesList("files/names/last.txt");
     int rand = random(2, 501);
@@ -110,7 +112,7 @@ public:
     namesList.close();
     names += " ";
     names += ln;
-    enemyNames[x]=names;
+    enemyNames[x][0]=names;
   };
   void setEnemy() {
     for (int i = 0; i < em+1; i++) {
@@ -249,9 +251,15 @@ public:
   void UpDiscEms() {
      if (checkForEm(playerloc[0], playerloc[1], 2) > -1){
        enemies[5][checkForEm(playerloc[0], playerloc[1], 2)]=1;
-       cout << "You happen to stumble across an enemy, \n"; 
+       cout << "You happen to stumble across an enemy, ";
+       if (enemyNames[checkForEm(playerloc[0], playerloc[1], 2)][1]=="m"){
+         cout << "his name is ";
+       } else if (enemyNames[checkForEm(playerloc[0], playerloc[1], 2)][1]=="f"){
+         cout << "her name is "; 
+       }
+         cout << enemyNames[checkForEm(playerloc[0], playerloc[1], 2)][0] << endl; 
      }
-  };
+  }; 
 };
 void clear() { cout << "\033[2J\033[1;1H"; }
 int main() {
